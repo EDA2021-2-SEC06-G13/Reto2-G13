@@ -44,6 +44,7 @@ def printMenu():
     print("5- Clasificar las obras por la nacionalidad de su creador")
     print("6- Calcular el costo para transportar todas las obras de un departamento")
     print("7- Proponer una nueva exposicion en el museo")
+    print("8- Encuentre las obras mas antiguas para un medio especifico")
 
 
 def initCatalog():
