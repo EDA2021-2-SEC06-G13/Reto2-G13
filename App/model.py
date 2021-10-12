@@ -49,7 +49,7 @@ def newCatalog():
     catalog = {'artistas': None,
                'obras': None}
 
-    catalog['artistas'] = lt.newList("ARRAY_LIST")
+    catalog['artistas'] = mp.newMap(40,maptype='PROBING',loadfactor=0.5,comparefunction=cmpmedios)
     catalog["obras"] = lt.newList("ARRAY_LIST")
     catalog["medios"]=mp.newMap(40,maptype='PROBING',loadfactor=0.5,comparefunction=cmpmedios)
 
@@ -149,12 +149,14 @@ def comparepaises(pais1, pais2):
 
 #Como curador del museo quiero listar cronológicamente los artistas que nacieron en un rango de años.
 def artistasCronologicamente(anho_inicio, anho_final,catalog):
-    ordenar=sa.sort(catalog["artistas"],cmpfunction)
+    encontrar= mp.get(catalog["artistas"], anho_inicio)
+    encontrar_2=mp.get(catalog["artistas"],anho_final)
+    lista_1= me.getValue(encontrar)
+    lista_2=me.getValue(encontrar_2)
+    ordenar=sa.sort(lista_1,cmpfunction)
     lista_1234=lt.newList("ARRAY_LIST")
-    for i in range(1,lt.size(ordenar)+1):
-        anho=lt.getElement(ordenar,i)
-        if int(anho["BeginDate"])>= int(anho_inicio) and int(anho["BeginDate"])<=int(anho_final):
-            lt.addLast(lista_1234,anho)
+    if int(anho["BeginDate"])>= int(anho_1) and int(anho["BeginDate"])<=int(anho_2):
+        lt.addLast(lista_1234,anho)
     return lista_1234
 
 
