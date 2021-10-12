@@ -49,9 +49,8 @@ def newCatalog():
     catalog = {'artistas': None,
                'obras': None}
 
-    catalog['artistas'] = mp.newMap(40,maptype='PROBING',loadfactor=0.5,comparefunction=cmpmedios)
-    catalog["obras"] = lt.newList("ARRAY_LIST")
-    catalog["medios"]=mp.newMap(40,maptype='PROBING',loadfactor=0.5,comparefunction=cmpmedios)
+    catalog['artistas'] = mp.newMap(152,maptype='PROBING',loadfactor=0.5,comparefunction=cmpartistas)
+    catalog["obras"] = mp.newMap(656,maptype='PROBING',loadfactor=0.5,comparefunction=cmpobras)
 
                             
     return catalog
@@ -59,30 +58,15 @@ def newCatalog():
 
 
 # Funciones para agregar informacion al catalogo
-def addArtist(catalog, artistas):
-   
-    lt.addLast(catalog['artistas'], artistas)
-    
-    
+def addArtist(catalog, artista):
+    mp.put(catalog["artistas"],artista["DisplayName"],artista)
 
 def addObras(catalog, obras):
-    
-    lt.addLast(catalog['obras'], obras)
-
-    medio=obras["Medium"]
-    if not mp.contains(catalog["medios"],medio):
-        lista=lt.newList("ARRAY_LIST")
-        lt.addLast(lista,obras)
-        mp.put(catalog["medios"],medio,lista)
-    else:
-        lista=mp.get(catalog["medios"],medio)
-        lista2=me.getValue(lista)
-        lt.addLast(lista2,obras)
-        mp.put(catalog["medios"],medio,lista2)
+    mp.put(catalog["artistas"],obras["DisplayName"],obras)
+ 
 
 
-
-
+"""""
 def tres(medio,cantidad,catalog):
     encontrar=mp.get(catalog["medios"],medio)
     lista=me.getValue(encontrar)
@@ -93,8 +77,7 @@ def tres(medio,cantidad,catalog):
     else:
         return ordenada
 
-
-
+"""
 
 
  
@@ -106,7 +89,7 @@ def tres(medio,cantidad,catalog):
 
 
 
-
+"""""
 def cmpmedios(country, count_entry):     
     ctentry = me.getKey(count_entry)    
     if (country) == (ctentry):         
@@ -115,6 +98,27 @@ def cmpmedios(country, count_entry):
         return 1     
     else:         
         return -1
+"""
+
+def cmpartistas(nombre_art, artist_entry):
+    ctentry = me.getKey(artist_entry)    
+    if (nombre_art) == (ctentry):         
+        return 0     
+    elif (nombre_art) > (ctentry):         
+        return 1     
+    else:         
+        return -1
+
+
+def cmpobras(id_obras, artist_entry):
+    ctentry = me.getKey(artist_entry)    
+    if int(id_obras) == int(ctentry):         
+        return 0     
+    elif int(id_obras) > int(ctentry):         
+        return 1     
+    else:         
+        return -1
+
 
 
 def cmpfunction(uno,dos):
@@ -148,7 +152,20 @@ def comparepaises(pais1, pais2):
 
 
 #Como curador del museo quiero listar cronológicamente los artistas que nacieron en un rango de años.
+
+
 def artistasCronologicamente(anho_inicio, anho_final,catalog):
+    lista=mp.valueSet(catalog["artistas"])
+    ordenar=sa.sort(lista,cmpfunction)
+    lista_1234=lt.newList("ARRAY_LIST")
+    for i in range(1,lt.size(ordenar)+1):
+        anho=lt.getElement(ordenar,i)
+        if int(anho["BeginDate"])>= int(anho_inicio) and int(anho["BeginDate"])<=int(anho_final):
+            lt.addLast(lista_1234,anho)
+    return lista_1234
+
+
+
     encontrar= mp.get(catalog["artistas"], anho_inicio)
     encontrar_2=mp.get(catalog["artistas"],anho_final)
     lista_1= me.getValue(encontrar)
