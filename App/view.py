@@ -150,6 +150,12 @@ while True:
         medio=input("Ingrese el medio por el cual quiere analizar la informacion: ")
         r=controller.laboratorio(medio,cantidad,catalog)
         print (r)
+    elif int(inputs[0])== 9:
+        nacionalidad = input ("Ingrese una nacionalidad: ")
+        r = controller.laboratorio_2(nacionalidad, catalog)
+        if r == None:
+            print("La nacionalidad no existe")
+        print(r)
     else:
         sys.exit(0)
 sys.exit(0)

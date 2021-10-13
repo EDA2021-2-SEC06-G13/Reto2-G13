@@ -51,7 +51,8 @@ def newCatalog():
 
     catalog['artistas'] = mp.newMap(152,maptype='PROBING',loadfactor=0.5,comparefunction=cmpartistas)
     catalog["obras"] = mp.newMap(656,maptype='PROBING',loadfactor=0.5,comparefunction=cmpobras)
-
+    catalog["medios"] = mp.newMap(40, maptype='CHAINING', loadfactor=4.00, comparefunction=cmpmedios)
+    catalog["nationality"] = mp.newMap(152, maptype='CHAINING', loadfactor=4.00, comparefunction=cmpnacionalidad)
                             
     return catalog
 
@@ -59,14 +60,40 @@ def newCatalog():
 
 # Funciones para agregar informacion al catalogo
 def addArtist(catalog, artista):
-    mp.put(catalog["artistas"],artista["DisplayName"],artista)
+    presente = mp.contains(catalog["artistas"], artista["ConstituentID"])
+    if not presente:
+        mp.put(catalog["artistas"],artista["ConstituentID"],artista)
+
 
 def addObras(catalog, obras):
-    mp.put(catalog["artistas"],obras["DisplayName"],obras)
+    presente = mp.contains(catalog["obras"], obras["ObjectID"])
+    if not presente:
+        mp.put(catalog["obras"],obras["ObjectID"],obras)
+        ids= obras["ConstituentID"]
+        ids = ids.replace("[", "").replace("]","").replace(" ", "").split(",")
+        for id in ids:
+            esta = mp.contains(catalog["artistas"], id)
+            if esta:
+                artista = mp.get(catalog["artistas"], id)
+                artista= artista["value"]
+                nacionalidad = artista["Nationality"]
+                nacionalidad_esta = mp.contains(catalog["nationality"], nacionalidad)
+                if not nacionalidad_esta:
+                    lista = lt.newList()
+                    lt.addLast(lista, obras)
+                    mp.put(catalog["nationality"], nacionalidad, lista)
+                else:
+                    lista=mp.get(catalog["nationality"], nacionalidad)["value"]
+                    lt.addLast(lista, obras)
+                    mp.put(catalog["nationality"], nacionalidad, lista)
+
+
+
+
  
 
 
-"""""
+
 def tres(medio,cantidad,catalog):
     encontrar=mp.get(catalog["medios"],medio)
     lista=me.getValue(encontrar)
@@ -77,8 +104,13 @@ def tres(medio,cantidad,catalog):
     else:
         return ordenada
 
-"""
 
+def nacionalidad(nacionalidad, catalog):
+    presente = mp.contains(catalog["nationality"],nacionalidad)
+    if presente:
+        lista= mp.get(catalog["nationality"],nacionalidad)["value"]
+        tamano = lt.size(lista)
+        return tamano
 
  
 # Funciones para creacion de datos
@@ -89,7 +121,7 @@ def tres(medio,cantidad,catalog):
 
 
 
-"""""
+
 def cmpmedios(country, count_entry):     
     ctentry = me.getKey(count_entry)    
     if (country) == (ctentry):         
@@ -98,13 +130,13 @@ def cmpmedios(country, count_entry):
         return 1     
     else:         
         return -1
-"""
+
 
 def cmpartistas(nombre_art, artist_entry):
     ctentry = me.getKey(artist_entry)    
-    if (nombre_art) == (ctentry):         
+    if int(nombre_art) == int(ctentry):         
         return 0     
-    elif (nombre_art) > (ctentry):         
+    elif int(nombre_art) > int(ctentry):         
         return 1     
     else:         
         return -1
@@ -118,8 +150,14 @@ def cmpobras(id_obras, artist_entry):
         return 1     
     else:         
         return -1
-
-
+def cmpnacionalidad(nacionalidad, count_entry):
+    ctentry = me.getKey(count_entry)    
+    if (nacionalidad) == (ctentry):         
+        return 0     
+    elif (nacionalidad) > (ctentry):         
+        return 1     
+    else:         
+        return -1
 
 def cmpfunction(uno,dos):
 
@@ -176,16 +214,18 @@ def artistasCronologicamente(anho_inicio, anho_final,catalog):
         lt.addLast(lista_1234,anho)
     return lista_1234
 
-
 def adquisicionCronologicamente(fecha_inicial,fecha_final,catalog):
-        ordenar=sa.sort(catalog["obras"],cmpArtWorkByDateAcquired)
-        lista=lt.newList("ARAY_LIST")
-        for i in range(1,lt.size(ordenar)+1):
-            anho=lt.getElement(ordenar,i)
-            x=str((anho["DateAcquired"]))
-            if x>=(fecha_inicial) and x<=(fecha_final):
-                lt.addLast(lista,anho)
-        return lista
+    lista = mp.valueSet(catalog["obras"])
+    ordenar=sa.sort(lista,cmpArtWorkByDateAcquired)
+    lista=lt.newList("ARRAY_LIST")
+    for i in range(1,lt.size(ordenar)+1):
+        anho=lt.getElement(ordenar,i)
+        x=str((anho["DateAcquired"]))
+        if x>=(fecha_inicial) and x<=(fecha_final):
+            lt.addLast(lista,anho)
+    return lista
+
+        
 
 def clasificarobras(nombreArtista,catalog):
     lista=lt.newList('ARRAY_LIST',
@@ -225,16 +265,6 @@ def clasificarobras(nombreArtista,catalog):
     sorted_list = sa.sort(lista, comparepais)
     return sorted_list
     
-'''    lista=lt.newList("SINGLE_LINKED")
-    lista_artista=lt.newList("SINGLE_LINKED")
-    for i in range(1,lt.size(catalog)):
-        nombre=lt.getElement(catalog["artistas"])
-        if  str(nombre ["DisplayName"])==str(nombreArtista):
-            lt.addLast(lista,nombre)
-    for i in range(0,lt.size(lista_artista)):
-        tecnica=lt.getElement(catalog["obras"])
-        r=tecnica ["Medium"]
-        lt.addLast(lista_artista,r)'''
 
 def clasificarObrasNacionalidad(catalog):
     lista=lt.newList('ARRAY_LIST',
