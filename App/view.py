@@ -45,7 +45,7 @@ def printMenu():
     print("6- Calcular el costo para transportar todas las obras de un departamento")
     print("7- Proponer una nueva exposicion en el museo")
     print("8- Encuentre las obras mas antiguas para un medio especifico")
-
+    print("9- Encuentre la cantidad de obras para una nacionalidad")
 
 def initCatalog():
     """
@@ -152,10 +152,14 @@ while True:
         print (r)
     elif int(inputs[0])== 9:
         nacionalidad = input ("Ingrese una nacionalidad: ")
+        inicio=time.process_time()
         r = controller.laboratorio_2(nacionalidad, catalog)
         if r == None:
             print("La nacionalidad no existe")
         print(r)
+        fin=time.process_time()
+        tiempo=(fin-inicio)*1000
+        print("Tiempo: "+str(tiempo))
     else:
         sys.exit(0)
 sys.exit(0)

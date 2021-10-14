@@ -52,7 +52,7 @@ def newCatalog():
     catalog['artistas'] = mp.newMap(152,maptype='PROBING',loadfactor=0.5,comparefunction=cmpartistas)
     catalog["obras"] = mp.newMap(656,maptype='PROBING',loadfactor=0.5,comparefunction=cmpobras)
     catalog["medios"] = mp.newMap(40, maptype='CHAINING', loadfactor=4.00, comparefunction=cmpmedios)
-    catalog["nationality"] = mp.newMap(152, maptype='CHAINING', loadfactor=4.00, comparefunction=cmpnacionalidad)
+    catalog["nationality"] = mp.newMap(152, maptype='PROBING', loadfactor=0.80, comparefunction=cmpnacionalidad)
                             
     return catalog
 
@@ -86,12 +86,7 @@ def addObras(catalog, obras):
                     lista=mp.get(catalog["nationality"], nacionalidad)["value"]
                     lt.addLast(lista, obras)
                     mp.put(catalog["nationality"], nacionalidad, lista)
-
-
-
-
- 
-
+    
 
 
 def tres(medio,cantidad,catalog):
