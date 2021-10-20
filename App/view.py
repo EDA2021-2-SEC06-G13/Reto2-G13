@@ -24,6 +24,7 @@ import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
+from DISClib.Algorithms.Sorting import shellsort as sa
 assert cf
 import time
 
@@ -96,11 +97,11 @@ while True:
             if  str(comprar["CreditLine"])==str("Purchase"):
                 con+=1
         print("Se encontraron "+str(con)+" obras adquiridas por compra.")
-        print("Las primeras tres obras en el rango son...")
+        print("Las ultima tres obras en el rango son...")
         for i in range(1,4):
             valor=lt.getElement(r,i)
             print(valor)
-        print("Las ultimas tres obras en el rango son...")
+        print("Las primeras tres obras en el rango son...")
         for j in range(lt.size(r)-2,lt.size(r)+1):
             ultimas=lt.getElement(r,j)
             print(ultimas)
@@ -122,14 +123,17 @@ while True:
     elif int(inputs[0]) == 5:
         inicio=time.process_time()
         r=controller.requerimiento_4(catalog)
-        for i in range(1,10):
-            valor=lt.getElement(r,i)
-            nacionalidad=lt.getElement(valor, 1)
-            cantidad=lt.getElement(valor,2)
+        
+        for i in range(1,11):
+            valor=lt.getElement(r,i)        
+            cantidad=valor["numero_obras"]
+            nacionalidad=valor["nacionalidad"]
+            if nacionalidad == "":
+                nacionalidad = "Unknown"
             print(nacionalidad,cantidad)
         for mayor in range(1,4):
             val=lt.getElement(r,mayor)
-            print(val)
+            #print(val)
         pass
     elif int(inputs[0]) == 6:
         departamento=input("Ingrese el departamento que quiere analizar: ")

@@ -83,15 +83,21 @@ def addObras(catalog, obras):
                 artista= artista["value"]
                 nacionalidad = artista["Nationality"]
                 nacionalidad_esta = mp.contains(catalog["nationality"], nacionalidad)
+                
                 if not nacionalidad_esta:
                     nacionalidad_1=nueva_nacionalidad(nacionalidad)
                     lt.addLast(nacionalidad_1["obras"], obras)
                     nacionalidad_1["numero_obras"]=lt.size(nacionalidad_1["obras"])
                     mp.put(catalog["nationality"], nacionalidad, nacionalidad_1)
+                    
                 else:
                     nacionalidad_1=mp.get(catalog["nationality"], nacionalidad)["value"]
+                    if nacionalidad_1["nacionalidad"] == "":
+                        nacionalidad_1["nacionalidad"] = "Unknown"
                     lt.addLast(nacionalidad_1["obras"], obras)
                     nacionalidad_1["numero_obras"]=lt.size(nacionalidad_1["obras"])
+                    
+                
                 medio=obras["Medium"]
                 mapa_artista=mp.get(catalog["artist_medio"],id)["value"]
                 medio_esta=mp.contains(mapa_artista,medio)
@@ -109,7 +115,7 @@ def addObras(catalog, obras):
                     
 
 def nueva_nacionalidad(nacionalidad):
-    nacionalidad = {"nacionalidad":nacionalidad,"numero_obras":0,"obras":lt.newList() }
+    nacionalidad = {"nacionalidad":nacionalidad,"numero_obras":0,"obras":lt.newList("ARRAY_LIST") }
     return nacionalidad
 
 
@@ -296,6 +302,7 @@ def clasificar_obras2(nombreArtista, catalog):
 def clasificarObrasNacionalidad(catalog):
     lista_nacionalidad = mp.valueSet(catalog["nationality"])  
     lista_ordenada = sa.sort(lista_nacionalidad, less)
+
     return lista_ordenada
 
     """
