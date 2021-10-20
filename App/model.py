@@ -53,6 +53,8 @@ def newCatalog():
     catalog["obras"] = mp.newMap(656,maptype='PROBING',loadfactor=0.5,comparefunction=cmpobras)
     catalog["medios"] = mp.newMap(40, maptype='CHAINING', loadfactor=4.00, comparefunction=cmpmedios)
     catalog["nationality"] = mp.newMap(152, maptype='PROBING', loadfactor=0.80, comparefunction=cmpnacionalidad)
+    catalog["artist_medio"]=mp.newMap(152,maptype="PROBING",loadfactor=0.5,comparefunction=compareartist_medios)
+
                             
     return catalog
 
@@ -63,6 +65,9 @@ def addArtist(catalog, artista):
     presente = mp.contains(catalog["artistas"], artista["ConstituentID"])
     if not presente:
         mp.put(catalog["artistas"],artista["ConstituentID"],artista)
+        mapa=mp.newMap(152,maptype="PROBING",loadfactor=0.5,comparefunction=compareartist_medios)
+
+        mp.put(catalog["artist_medio"],artista["ConstituentID"],mapa)
 
 
 def addObras(catalog, obras):
@@ -87,6 +92,20 @@ def addObras(catalog, obras):
                     nacionalidad_1=mp.get(catalog["nationality"], nacionalidad)["value"]
                     lt.addLast(nacionalidad_1["obras"], obras)
                     nacionalidad_1["numero_obras"]=lt.size(nacionalidad_1["obras"])
+                medio=obras["Medium"]
+                mapa_artista=mp.get(catalog["artist_medio"],id)["value"]
+                medio_esta=mp.contains(mapa_artista,medio)
+                if not medio_esta:
+                    lista_obras=lt.newList()
+                    lt.addLast(lista_obras,obras)
+                    mp.put(mapa_artista,medio,lista_obras)
+                else:
+                    lista_obras=mp.get(mapa_artista,medio)["value"]
+                    lt.addLast(lista_obras,obras)
+                    mp.put(mapa_artista,medio,lista_obras)
+                mp.put(catalog["artist_medio"],id,mapa_artista)   
+                
+
                     
 
 def nueva_nacionalidad(nacionalidad):
@@ -189,6 +208,15 @@ def less(element1, element2):
     if int(element1["numero_obras"]) > int(element2["numero_obras"]):
         return True
 
+def compareartist_medios(medio,medio_entry):
+    ctentry = me.getKey(medio_entry)    
+    if (medio) == (ctentry):         
+        return 0     
+    elif (medio) > (ctentry):         
+        return 1     
+    else:         
+        return -1
+
 # Funciones de ordenamiento
 
 
@@ -260,6 +288,10 @@ def clasificarobras(nombreArtista,catalog):
     sorted_list = sa.sort(lista, comparepais)
     return sorted_list
     
+"""""
+def clasificar_obras2(nombreArtista, catalog):
+"""
+
 
 def clasificarObrasNacionalidad(catalog):
     lista_nacionalidad = mp.valueSet(catalog["nationality"])  
