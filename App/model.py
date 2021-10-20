@@ -79,14 +79,20 @@ def addObras(catalog, obras):
                 nacionalidad = artista["Nationality"]
                 nacionalidad_esta = mp.contains(catalog["nationality"], nacionalidad)
                 if not nacionalidad_esta:
-                    lista = lt.newList()
-                    lt.addLast(lista, obras)
-                    mp.put(catalog["nationality"], nacionalidad, lista)
+                    nacionalidad_1=nueva_nacionalidad(nacionalidad)
+                    lt.addLast(nacionalidad_1["obras"], obras)
+                    nacionalidad_1["numero_obras"]=lt.size(nacionalidad_1["obras"])
+                    mp.put(catalog["nationality"], nacionalidad, nacionalidad_1)
                 else:
-                    lista=mp.get(catalog["nationality"], nacionalidad)["value"]
-                    lt.addLast(lista, obras)
-                    mp.put(catalog["nationality"], nacionalidad, lista)
-    
+                    nacionalidad_1=mp.get(catalog["nationality"], nacionalidad)["value"]
+                    lt.addLast(nacionalidad_1["obras"], obras)
+                    nacionalidad_1["numero_obras"]=lt.size(nacionalidad_1["obras"])
+                    
+
+def nueva_nacionalidad(nacionalidad):
+    nacionalidad = {"nacionalidad":nacionalidad,"numero_obras":0,"obras":lt.newList() }
+    return nacionalidad
+
 
 
 def tres(medio,cantidad,catalog):
@@ -179,6 +185,9 @@ def comparepaises(pais1, pais2):
     if (lt.getElement(pais2, 1) ==pais1):
         return 0
     return -1
+def less(element1, element2):
+    if int(element1["numero_obras"]) > int(element2["numero_obras"]):
+        return True
 
 # Funciones de ordenamiento
 
@@ -199,16 +208,6 @@ def artistasCronologicamente(anho_inicio, anho_final,catalog):
 
 
 
-    encontrar= mp.get(catalog["artistas"], anho_inicio)
-    encontrar_2=mp.get(catalog["artistas"],anho_final)
-    lista_1= me.getValue(encontrar)
-    lista_2=me.getValue(encontrar_2)
-    ordenar=sa.sort(lista_1,cmpfunction)
-    lista_1234=lt.newList("ARRAY_LIST")
-    if int(anho["BeginDate"])>= int(anho_1) and int(anho["BeginDate"])<=int(anho_2):
-        lt.addLast(lista_1234,anho)
-    return lista_1234
-
 def adquisicionCronologicamente(fecha_inicial,fecha_final,catalog):
     lista = mp.valueSet(catalog["obras"])
     ordenar=sa.sort(lista,cmpArtWorkByDateAcquired)
@@ -223,6 +222,7 @@ def adquisicionCronologicamente(fecha_inicial,fecha_final,catalog):
         
 
 def clasificarobras(nombreArtista,catalog):
+    
     lista=lt.newList('ARRAY_LIST',
                                     cmpfunction=compareobras)
     
@@ -262,6 +262,11 @@ def clasificarobras(nombreArtista,catalog):
     
 
 def clasificarObrasNacionalidad(catalog):
+    lista_nacionalidad = mp.valueSet(catalog["nationality"])  
+    lista_ordenada = sa.sort(lista_nacionalidad, less)
+    return lista_ordenada
+
+    """
     lista=lt.newList('ARRAY_LIST',
                                     cmpfunction=comparepaises)
     
@@ -298,7 +303,7 @@ def clasificarObrasNacionalidad(catalog):
                 j+=1
         i+=1
     sorted_list = sa.sort(lista, comparepais)
-    return sorted_list
+    return sorted_list"""
 
 
 def transportar_obras(catalog,departamento):
