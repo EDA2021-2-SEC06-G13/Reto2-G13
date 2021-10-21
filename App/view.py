@@ -139,7 +139,7 @@ while True:
     elif int(inputs[0]) == 6:
         departamento=input("Ingrese el departamento que quiere analizar: ")
         r=controller.requerimiento_5(departamento,catalog)
-        print("Se transportaran "+str(lt.size(r))+" desde "+str(departamento))
+        print("Se transportaran "+str(lt.size(r))+" dessde "+str(departamento))
         i=0
         for i in range(1,lt.size(r)):
             valor=lt.getElement(r,i)
