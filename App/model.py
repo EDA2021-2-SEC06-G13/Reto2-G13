@@ -256,7 +256,16 @@ def adquisicionCronologicamente(fecha_inicial,fecha_final,catalog):
         
 
 def clasificarobras(nombreArtista,catalog):
-    
+    encontrar_artista=mp.get(catalog["artist_medio"],nombreArtista)["value"]
+    obras=catalog["obras"]
+    medio=obras["Medium"]
+    lista=lt.newList()
+    encontrar_medio=mp.get(encontrar_artista,medio)["value"]
+    lt.addLast(lista,encontrar_medio)
+    lista_ordenada=sa.sort(lista,compareartist_medios)
+    return lista_ordenada
+
+    """
     lista=lt.newList('ARRAY_LIST',
                                     cmpfunction=compareobras)
     
@@ -292,11 +301,8 @@ def clasificarobras(nombreArtista,catalog):
                 j+=1
         i+=1
     sorted_list = sa.sort(lista, comparepais)
-    return sorted_list
+    return sorted_list"""
     
-"""""
-def clasificar_obras2(nombreArtista, catalog):
-"""
 
 
 def clasificarObrasNacionalidad(catalog):
@@ -305,44 +311,6 @@ def clasificarObrasNacionalidad(catalog):
 
     return lista_ordenada
 
-    """
-    lista=lt.newList('ARRAY_LIST',
-                                    cmpfunction=comparepaises)
-    
-    i =1
-    while i <= lt.size(catalog["obras"]):
-        obra = lt.getElement(catalog["obras"], i)
-        ids = obra["ConstituentID"]
-        ids = ids.replace("[", "").replace("]","").replace(" ", "").split(",")
-        
-        for id in ids:
-            j = 1
-            encontre_artista=False
-            
-            while j<= lt.size(catalog["artistas"]) and not encontre_artista:
-                artista = lt.getElement(catalog["artistas"], j)
-                iden= artista["ConstituentID"]
-                
-                if id == iden:
-                    encontre_artista=True
-                    nacionalidad = artista["Nationality"]
-                    if nacionalidad == "":
-                        nacionalidad = "Unknown"
-                    if lt.isPresent(lista, nacionalidad)==0:
-
-                        lista_2 = lt.newList()
-                        lt.addLast(lista_2, nacionalidad)
-                        lt.addLast(lista_2, 1)
-                        lt.addLast(lista, lista_2)
-                    
-                    else:
-                        pais= lt.getElement(lista,lt.isPresent(lista,nacionalidad))
-                        cantidad=lt.getElement(pais,2)
-                        lt.changeInfo(pais,2,cantidad+1)               
-                j+=1
-        i+=1
-    sorted_list = sa.sort(lista, comparepais)
-    return sorted_list"""
 
 
 def transportar_obras(catalog,departamento):

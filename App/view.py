@@ -110,6 +110,7 @@ while True:
         nombreArtista=input("Ingrese el nombre del artista al que quiere analizar: ")
         r=controller.requerimiento_3(nombreArtista, catalog)
         print("El total de obras del artista son: "+str(lt.size(r)))
+        
         for i in range(1,lt.size(r)):
             valor=lt.getElement(r,i)
             print("La tecnica que mas utilizo..")
